@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-
+import Chart from 'chart.js';
 
 class App extends React.Component{
   constructor(){
@@ -79,14 +79,31 @@ class App extends React.Component{
   }
 
   genGraph(){
-    let arr = [];
+    let points = [];
     let i = 0;
-    while(i < 1){
-      arr.push(this.genCurvePts(this.state.points,i));
-      i+=0.01;
+    while(i < 1.001){
+      let curvePt = this.genCurvePts(this.state.points,i); 
+      points.push({x: curvePt[0][0], y: curvePt[0][1]});
+      i+=0.001;
     }
-
-    console.log(arr);
+    let myLineChart = new Chart(document.querySelector("#graph").getContext("2d"), {
+      type: 'scatter',
+      data: {
+        datasets: [
+          {
+            label: "Curve",
+            data: points,
+            backgroundColor: "red",
+            pointRadius: 1
+          },
+          {
+            label: "Control Points",
+            data: this.state.points.map(p => ({x: p[0],y: p[1]})),
+            backgroundColor: "blue"
+          }
+        ]
+      }
+  });
   }
 
   componentDidMount(){
