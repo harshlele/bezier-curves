@@ -15,7 +15,9 @@ class App extends React.Component{
   render(){
     return (
       <div className="container">
-        <div id="graph-cont"></div>
+        <div id="graph-cont">
+          <canvas id="graph" width="600" height="600"></canvas>
+        </div>
         <div className="points">
           {this.state.points.map((pt,i) => 
               <div className="point" key={i}>
@@ -25,7 +27,7 @@ class App extends React.Component{
               </div>
             )}
           <div className="newPt">
-            <div className="point">
+            <div className="point bg-dgray">
                 x <input type="number" step="0.01" name="x" id="inputX" value={this.inputX} onInput={this.setInput.bind(this,'X')}/>
                 y <input type="number" step="0.01" name="y" id="inputY" value={this.inputY} onInput={this.setInput.bind(this,'Y')}/>
                 <a href="#" rel="noopener noreferrer" onClick={this.addCtrlPoint.bind(this)}>Add</a>
@@ -64,7 +66,7 @@ class App extends React.Component{
   }
 
   genCurvePts(ctrlPts,t){
-    if(ctrlPts.length == 1) return ctrlPts;
+    if(ctrlPts.length === 1) return ctrlPts;
     else{
       let p = []
       let i = 0;
