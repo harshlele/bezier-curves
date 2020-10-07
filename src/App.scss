@@ -1,0 +1,41 @@
+.App {
+  text-align: center;
+}
+
+.container{
+  width: 700px;
+  margin: 0 auto;
+  display: flex;
+}
+
+
+#graph-cont{
+  width: 600px;
+  height: 600px;
+  border-right: 1px solid gray;
+}
+
+.points{
+  padding: 20px 10px;
+}
+
+.point{
+  padding: 10px;
+  background-color: #eeeeee;
+  margin: 5px 0;
+  display: flex;
+  align-items: baseline;
+  
+  input{
+    width: 40px;
+    margin: 0 8px;
+    padding: 10px 5px ;
+  }
+
+  span{
+    padding: 10px;
+    background-color: white;
+    margin: 0 10px;
+    width: 30px;
+  }
+}
