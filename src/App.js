@@ -16,7 +16,6 @@ class App extends React.Component{
     return (
       <div className="container">
         <div id="graph-cont">
-          <canvas id="graph" width="600" height="600"></canvas>
         </div>
         <div className="points">
           {this.state.points.map((pt,i) => 
@@ -50,12 +49,15 @@ class App extends React.Component{
       let points = this.state.points;
       points.push([this.state.inputX,this.state.inputY]);
       this.setState({points, inputX: 0, inputY: 0});
+      this.genGraph(points);
     }
+    
   }
 
   removeCtrlPoint(pt){
     let points = this.state.points.filter(p => (p[0] !== pt[0] || p[1] !== pt[1]) );
     this.setState({points});
+    this.genGraph(points);
   }
 
   genPt(p1,p2,t){
@@ -78,15 +80,29 @@ class App extends React.Component{
     }
   }
 
-  genGraph(){
+  genGraph(pointArr){
     let points = [];
     let i = 0;
     while(i < 1.001){
-      let curvePt = this.genCurvePts(this.state.points,i); 
+      let curvePt = this.genCurvePts(pointArr,i); 
       points.push({x: curvePt[0][0], y: curvePt[0][1]});
       i+=0.001;
     }
-    let myLineChart = new Chart(document.querySelector("#graph").getContext("2d"), {
+
+
+    let graphCont = document.querySelector("#graph-cont");
+
+    //graphCont has only a single child
+    if(graphCont.firstChild)  graphCont.removeChild(graphCont.lastChild);
+
+    let graph = document.createElement("canvas");
+    graph.setAttribute("id",`graph${parseInt(Math.random()*100)}`);
+    graph.setAttribute("width",600);
+    graph.setAttribute("height",600);
+    
+    graphCont.appendChild(graph);
+
+    let myLineChart = new Chart(graph.getContext("2d"), {
       type: 'scatter',
       data: {
         datasets: [
@@ -94,12 +110,13 @@ class App extends React.Component{
             label: "Curve",
             data: points,
             backgroundColor: "red",
-            pointRadius: 1
+            pointRadius: 0.5
           },
           {
             label: "Control Points",
-            data: this.state.points.map(p => ({x: p[0],y: p[1]})),
-            backgroundColor: "blue"
+            data: pointArr.map(p => ({x: p[0],y: p[1]})),
+            backgroundColor: "blue",
+            pointRadius: 5
           }
         ]
       }
@@ -107,7 +124,7 @@ class App extends React.Component{
   }
 
   componentDidMount(){
-    this.genGraph();
+    this.genGraph(this.state.points);
   }
   
 }
