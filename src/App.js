@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.scss';
 import Chart from 'chart.js';
+import 'chartjs-plugin-dragdata'
 
 class App extends React.Component{
   constructor(){
@@ -102,6 +103,8 @@ class App extends React.Component{
     
     graphCont.appendChild(graph);
 
+    let _this = this;
+
     let myLineChart = new Chart(graph.getContext("2d"), {
       type: 'scatter',
       data: {
@@ -110,7 +113,8 @@ class App extends React.Component{
             label: "Curve",
             data: points,
             backgroundColor: "red",
-            pointRadius: 0.5
+            pointRadius: 0.5,
+            dragData: false
           },
           {
             label: "Control Points",
@@ -119,8 +123,43 @@ class App extends React.Component{
             pointRadius: 5
           }
         ]
+      },
+      options:{
+        dragData: true,
+        dragX: true,
+        dragOptions: {
+          showTooltip: true 
+        },
+        onDrag: function (e, datasetIndex, index, value) {
+          // change cursor style to grabbing during drag action
+          e.target.style.cursor = 'grabbing';
+        },
+        onDragEnd: function (e, datasetIndex, index, value) {
+          e.target.style.cursor = 'default';
+          if(datasetIndex == 1){
+            let points = _this.state.points;
+            let val = [
+              parseFloat(value.x.toFixed(2)),
+              parseFloat(value.y.toFixed(2))
+            ];
+            if(Math.abs(val[0] -  points[index][0]) > 0.01 || Math.abs(val[1] -  points[index][1]) > 0.01){
+              points[index] = val;
+              _this.setState({points: points});
+              _this.genGraph(points);
+            }
+            
+          }
+        },
+        hover: {
+          onHover: function(e) {
+            // indicate that a datapoint is draggable by showing the 'grab' cursor when hovered
+            const point = this.getElementAtEvent(e);
+            if (point.length) e.target.style.cursor = 'grab';
+            else e.target.style.cursor = 'default';
+          }
+        }
       }
-  });
+    });
   }
 
   componentDidMount(){
